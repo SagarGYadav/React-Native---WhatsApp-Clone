@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, StyleSheet, Text } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function App() {
   const [count, setCount] = useState(0);
+  const [newCount, setNewCount] = useState(0);
+
+  useEffect(() => {
+    console.log("I am Rendering");
+  }, [count, newCount]);
 
   // const add = () => {
   //   setCount(count + 1);
@@ -24,7 +29,7 @@ export default function App() {
   };
 
   const minus = () => {
-    setCount(count - 1);
+    setNewCount(newCount - 1);
   };
 
   return (

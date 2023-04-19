@@ -1,45 +1,56 @@
-import { useEffect, useState } from "react";
-import { Button, StyleSheet, Text } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import * as SplashScreen from "expo-splash-screen";
+import { useCallback, useEffect, useState } from "react";
+import * as Font from "expo-font";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  const [count, setCount] = useState(0);
-  const [newCount, setNewCount] = useState(0);
+  const [appIsLoaded, setAppIsLoaded] = useState(false);
 
   useEffect(() => {
-    console.log("I am Rendering");
-  }, [count, newCount]);
+    // load Fonts
+    //  we don't use async for useEffect so we using it inside useEffect in prepare function
+    const prepare = async () => {
+      try {
+        await Font.loadAsync({
+          black: require("./assets/fonts//Roboto-Black.ttf"),
+          blackItalic: require("./assets/fonts/Roboto-BlackItalic.ttf"),
+          bold: require("./assets/fonts/Roboto-Bold.ttf"),
+          boldItalic: require("./assets/fonts/Roboto-BoldItalic.ttf"),
+          italic: require("./assets/fonts/Roboto-Italic.ttf"),
+          light: require("./assets/fonts/Roboto-Light.ttf"),
+          lightItalic: require("./assets/fonts/Roboto-LightItalic.ttf"),
+          medium: require("./assets/fonts/Roboto-Medium.ttf"),
+          mediumItalic: require("./assets/fonts/Roboto-MediumItalic.ttf"),
+          regular: require("./assets/fonts/Roboto-Regular.ttf"),
+          thin: require("./assets/fonts/Roboto-Thin.ttf"),
+          thinItalic: require("./assets/fonts/Roboto-ThinItalic.ttf"),
+        });
+      } catch (error) {
+        console.log.error();
+      } finally {
+        setAppIsLoaded(true);
+      }
+    };
+    prepare();
+  }, []);
 
-  // const add = () => {
-  //   setCount(count + 1);
-  // };
+  const onLayout = useCallback(async () => {
+    if (appIsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsLoaded]);
 
-  // const add = () => {
-  //   setCount((prev) => {
-  //     return prev + 1;
-  //   });
-  //   setCount((prev) => {
-  //     return prev + 1;
-  //   });
-  // };
-
-  const add = () => {
-    setCount((prev) => prev + 1);
-    setCount((prev) => prev + 1);
-  };
-
-  const minus = () => {
-    setNewCount(newCount - 1);
-  };
+  if (!appIsLoaded) {
+    return null;
+  }
 
   return (
-    <SafeAreaProvider style={styles.container}>
+    <SafeAreaProvider style={styles.container} onLayout={onLayout}>
       <SafeAreaView>
-        <Button title="Add" onPress={add} />
-
-        <Text style={styles.label}>{count}</Text>
-
-        <Button title="Minus" onPress={minus} />
+        <Text style={styles.label}>Hello</Text>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -55,5 +66,6 @@ const styles = StyleSheet.create({
   label: {
     color: "black",
     fontSize: 20,
+    fontFamily: "regular",
   },
 });
